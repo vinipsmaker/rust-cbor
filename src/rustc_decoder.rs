@@ -287,6 +287,7 @@ impl RustcDecoder for CborDecoder {
                 return Err(self.err(ReadError::mismatch(Type::Map, &v)));
             }
         };
+        println!("HERE IT GOES: {:?}", map);
         let val = match map.remove(f_name) {
             Some(val) => { self.stack.push(val); try!(f(self)) }
             None => {
