@@ -287,15 +287,19 @@ impl RustcDecoder for CborDecoder {
                 return Err(self.err(ReadError::mismatch(Type::Map, &v)));
             }
         };
-        println!("HERE IT GOES: {:?}", map);
+        //println!("HERE IT GOES: {:?}", map);
         let val = match map.remove(f_name) {
             Some(val) => { self.stack.push(val); try!(f(self)) }
             None => {
                 self.stack.push(Cbor::Null);
                 match f(self) {
                     Ok(val) => val,
-                    Err(_) => return Err(self.errstr(format!(
-                        "Missing field '{}' in map object.", f_name))),
+                    Err(_) => {
+                        println!("LENS OF TRUTH: {} field missing. Read: {:?}",
+                                 f_name, map);
+                        return Err(self.errstr(format!(
+                            "Missing field '{}' in map object.", f_name)))
+                    },
                 }
             }
         };
